@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Sinh Nhật! 🎉</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #ff7597;
+            --secondary-color: #ffb3c6;
+            --background-color: #fff0f3;
+            --text-color: #4a4a4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* --- 1. INTRO SCREEN (HỘP QUÀ BÍ ẨN) --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+
+        .gift-box {
+            font-size: 100px;
+            cursor: pointer;
+            animation: bounce 1.2s infinite alternate;
+            transition: transform 0.3s;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1);
+        }
+
+        #intro-screen p {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* --- 2. MAIN CONTENT CONTAINER --- */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease-in;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        /* --- BÁNH KEM & THỔI NẾN --- */
+        .cake-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 117, 151, 0.15);
+            margin-bottom: 40px;
+        }
+
+        .cake {
+            position: relative;
+            width: 150px;
+            height: 120px;
+            background: #f4acb7;
+            margin: 40px auto 20px auto;
+            border-radius: 20px 20px 0 0;
+            box-shadow: inset 0 -10px 0 #ff85a1;
+        }
+
+        .cake::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: #fff;
+            border-radius: 10px;
+        }
+
+        .candle {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 35px;
+            background: linear-gradient(to right, #e9ecef, #ffccd5);
+            border-radius: 4px;
+        }
+
+        .flame {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 18px;
+            background: #ffbc42;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ffbc42;
+            animation: flicker 0.6s infinite alternate;
+        }
+
+        .flame.extinguished {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), #ff85a1);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 117, 151, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 117, 151, 0.6);
+        }
+
+        /* --- ALBUM ẢNH KỶ NIỆM --- */
+        .album-section {
+            margin-bottom: 40px;
+        }
+
+        .album-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .photo-card {
+            background: white;
+            padding: 12px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transform: rotate(var(--rotation));
+            transition: 0.3s;
+        }
+
+        .photo-card:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .photo-card p {
+            margin-top: 10px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* --- THƯ CHÚC MỪNG (TYPEWRITER) --- */
+        .letter-section {
+            background: #fffafb;
+            border-left: 5px solid var(--primary-color);
+            padding: 30px;
+            border-radius: 0 20px 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            text-align: left;
+            margin-bottom: 60px;
+            min-height: 150px;
+        }
+
+        .letter-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #typing-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+            white-space: pre-line;
+        }
+
+        /* --- HIỆU ỨNG TRÁI TIM BAY NỀN --- */
+        .heart-bg {
+            position: fixed;
+            top: -10%;
+            font-size: 20px;
+            color: rgba(255, 117, 151, 0.2);
+            z-index: -1;
+            animation: fall linear infinite;
+        }
+
+        /* --- ANIMATIONS KEYFRAMES --- */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(3deg); background: #ff9f1c; }
+        }
+        @keyframes fall {
+            0% { top: -10%; transform: translateX(0) rotate(0deg); }
+            100% { top: 110%; transform: translateX(100px) rotate(360deg); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .photo-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen" onclick="openGift()">
+        <div class="gift-box">🎁</div>
+        <p><i class="fa-solid fa-heart"></i> Bạn có một món quà! Bấm để mở <i class="fa-solid fa-heart"></i></p>
+    </div>
+
+    <div id="main-content">
+        
+        <header>
+            <h1 id="main-title">Happy Birthday, Vân Ánh! 💖</h1>
+            <p class="sub-title">Chào đón tuổi 20 rực rỡ ✨</p>
+        </header>
+
+        <section class="cake-section">
+            <div class="cake">
+                <div class="candle">
+                    <div class="flame" id="candle-flame"></div>
+                </div>
+            </div>
+            <button class="btn" id="blow-btn" onclick="blowCandle()">
+                <i class="fa-solid fa-wind"></i> Thổi Nến Ước Nguyện
+            </button>
+        </section>
+
+        <section class="letter-section">
+            <h2><i class="fa-solid fa-envelope-open-text"></i> Gửi Cậu...</h2>
+            <div id="typing-text"></div>
+        </section>
+
+        <section class="album-section">
+            <div class="photo-grid">
+                
+                <div class="photo-card" style="--rotation: -3deg;">
+                    <img src="vananh.jpg" alt="Kỷ niệm 1">
+                    <p>Nụ cười tỏa nắng ☀️</p>
+                </div>
+
+                <div class="photo-card" style="--rotation: 4deg;">
+                    <img src="vananh2.jpg" alt="Kỷ niệm 2">
+                    <p>Tuổi mới rực rỡ 🌸</p>
+                </div>
+
+                <div class="photo-card" style="--rotation: -2deg;">
+                    <img src="vananh1.png" alt="Kỷ niệm 3">
+                    <p>Luôn hạnh phúc nhé! 💖</p>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Cấu hình lời chúc tự động đánh chữ
+        // BẠN CÓ THỂ THAY ĐỔI LỜI CHÚC Ở ĐÂY (Dùng \n để xuống dòng)
+        const birthdayWishes = `Chúc mừng sinh nhật Vân Ánh - người bạn tuyệt vời nhất của Minh Thắng! 🎉\n\nBước sang tuổi mới, chúc Vân Ánh luôn xinh đẹp, tự tin và mỉm cười thật nhiều nhé. Mong rằng mọi dự định sắp tới của Vân Ánh đều thành công rực rỡ và cuộc sống luôn tràn ngập những điều ngọt ngào nhất.\n\nCảm ơn vì đã luôn là một phần thanh xuân tuyệt vời của Minh Thắng! Forever Best Friend! 💕`;
+
+        // 1. Hàm mở hộp quà (Intro)
+        function openGift() {
+            // Hiệu ứng pháo hoa mở màn cực mạnh
+            durationFireworks(3);
+
+            // Ẩn màn hình Intro và hiện nội dung chính
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
+            
+            intro.style.opacity = '0';
+            intro.style.visibility = 'hidden';
+            
+            main.style.display = 'block';
+            setTimeout(() => {
+                main.style.opacity = '1';
+                main.style.visibility = 'visible';
+                // Bắt đầu chạy hiệu ứng chữ viết tay sau khi vào màn hình chính
+                startTyping();
+            }, 500);
+
+            // Tạo hiệu ứng trái tim rơi liên tục ở nền
+            setInterval(createHeart, 400);
+        }
+
+        // 2. Hàm thổi nến
+        function blowCandle() {
+            const flame = document.getElementById('candle-flame');
+            const btn = document.getElementById('blow-btn');
+            
+            if(!flame.classList.contains('extinguished')) {
+                flame.classList.add('extinguished'); // Tắt nến
+                btn.innerHTML = `<i class="fa-solid fa-cake-candles"></i> Tuổi Mới Hạnh Phúc!`;
+                
+                // Bắn pháo hoa ăn mừng chúc mừng sinh nhật
+                celebrateFireworks();
+                
+                // Đổi tiêu đề chúc mừng rực rỡ hơn
+                document.getElementById('main-title').innerHTML = "✨ Happy Birthday Bestie! ✨";
+            }
+        }
+
+        // 3. Hiệu ứng chữ đánh máy (Typewriter)
+        function startTyping() {
+            let index = 0;
+            const target = document.getElementById('typing-text');
+            
+            function type() {
+                if (index < birthdayWishes.length) {
+                    target.innerHTML += birthdayWishes.charAt(index);
+                    index++;
+                    setTimeout(type, 50); // Tốc độ đánh chữ (ms)
+                }
+            }
+            type();
+        }
+
+        // 4. Tạo hiệu ứng trái tim bay nền ngẫu nhiên
+        function createHeart() {
+            const heart = document.createElement('i');
+            heart.classList.add('fa-solid', 'fa-heart', 'heart-bg');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's'; // từ 3s - 6s
+            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        // 5. Hàm bắn pháo hoa kéo dài (Dùng cho intro)
+        function durationFireworks(seconds) {
+            let end = Date.now() + (seconds * 1000);
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff7597', '#ffb3c6', '#fff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff7597', '#ffb3c6', '#fff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // 6. Hàm bắn pháo hoa chùm khi thổi nến thành công
+        function celebrateFireworks() {
+            let count = 200;
+            let defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+    </script>
+</body>
+</html>
